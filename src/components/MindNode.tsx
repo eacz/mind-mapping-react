@@ -64,7 +64,7 @@ export const MindNode = () => {
     }
   }
 
-  const refreshPage = () => {
+  const resetPage = () => {
     window.location.reload()
   }
 
@@ -74,7 +74,7 @@ export const MindNode = () => {
   )
 
   return (
-    <div id='container' style={{ width: '100%', maxWidth: '100wh', height: 'calc(100vh - 100px) ' }}>
+    <div className='container' style={{ width: '100%', maxWidth: '100wh', height: 'calc(100vh - 100px) ' }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -102,13 +102,13 @@ export const MindNode = () => {
         </button>
       </div>
       <div>
-        <button type='button' onClick={handleSave}>
+        <button className='btn-save' type='button' onClick={handleSave}>
           Save Mind Map
         </button>
-        <button type='button' onClick={handleLoad}>
+        <button className='btn-load' type='button' onClick={handleLoad}>
           Load Mind Map
         </button>
-        <button type='button' onClick={refreshPage}>
+        <button className='.btn-reset' type='button' onClick={resetPage}>
           Reset Mind Map
         </button>
       </div>
