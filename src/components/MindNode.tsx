@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react'
 import ReactFlow, {
   addEdge,
+  Background,
+  BackgroundVariant,
   Connection,
   Controls,
   Edge,
@@ -10,6 +12,8 @@ import ReactFlow, {
 } from 'reactflow'
 
 import 'reactflow/dist/style.css'
+
+import { loadMindMap, saveMindMap } from '../utils/storage'
 
 const initialNodes = [
   {
@@ -22,12 +26,19 @@ const initialNodes = [
 
 const initialEdges: Edge[] = []
 
+const connectionLineStyle = {
+  stroke: '#9999',
+  strokeWidth: 3,
+}
+const defaultEdgeOptions = { style: connectionLineStyle, type: 'mindmap' }
+
 export const MindNode = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>(initialEdges)
   const [name, setName] = useState('')
 
   const addNode = () => {
+    if (!name) return
     setNodes((e) =>
       e.concat({
         id: (e.length + 1).toString(),
@@ -38,6 +49,23 @@ export const MindNode = () => {
         },
       })
     )
+    setName('')
+  }
+
+  const handleSave = () => {
+    saveMindMap(nodes, edges)
+  }
+
+  const handleLoad = () => {
+    const loadedData = loadMindMap()
+    if (loadedData) {
+      setNodes(loadedData.nodes)
+      setEdges(loadedData.edges)
+    }
+  }
+
+  const refreshPage = () => {
+    window.location.reload()
   }
 
   const onConnect = useCallback(
@@ -52,8 +80,12 @@ export const MindNode = () => {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        connectionLineStyle={connectionLineStyle}
+        defaultEdgeOptions={defaultEdgeOptions}
         onConnect={onConnect}>
         <Controls />
+
+        <Background variant={BackgroundVariant.Lines} gap={12} size={1} />
 
         <MiniMap
           nodeColor={(n) => {
@@ -64,9 +96,20 @@ export const MindNode = () => {
         />
       </ReactFlow>
       <div>
-        <input type='text' onChange={(e) => setName(e.target.value)} name='title' />
-        <button type='button' onClick={addNode}>
+        <input type='text' onChange={(e) => setName(e.target.value)} value={name} name='title' />
+        <button type='button' onClick={addNode} disabled={!name}>
           Add Node
+        </button>
+      </div>
+      <div>
+        <button type='button' onClick={handleSave}>
+          Save Mind Map
+        </button>
+        <button type='button' onClick={handleLoad}>
+          Load Mind Map
+        </button>
+        <button type='button' onClick={refreshPage}>
+          Reset Mind Map
         </button>
       </div>
     </div>
